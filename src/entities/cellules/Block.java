@@ -12,10 +12,10 @@ import static java.lang.Math.abs;
  *
  * @author zouhairhajji
  */
-public class Empty extends AbstractNode {
+public class Block extends AbstractNode{
 
-    public Empty(int cellID) {
-        super(cellID, '.', true, 0);
+    public Block(int cellID) {
+        super(cellID, 'X', false, 0);
     }
 
     @Override
@@ -24,7 +24,5 @@ public class Empty extends AbstractNode {
                 + abs(this.getyPosition() - endNode.getyPosition()))
                 * BASICMOVEMENTCOST);
     }
-
     
-
 }

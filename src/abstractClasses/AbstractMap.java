@@ -12,7 +12,7 @@ import entities.cellules.Empty;
 public abstract class AbstractMap {
 
     public static int WIDTH = 20;
-    protected boolean CANMOVEDIAGONALY = true;
+    protected boolean canMoveDiagonaly = true;
     private HashMap<Integer, AbstractNode> nodes;
     protected int higth;
     
@@ -31,6 +31,11 @@ public abstract class AbstractMap {
         }
     }
 
+    
+    public void setCell(AbstractNode node){
+        this.nodes.put(node.getCellID(), node);
+    }
+    
     public void setWalkable(int x, int y, boolean state) {
         this.setWalkable(getCellID(x, y), state);
     }
@@ -58,6 +63,10 @@ public abstract class AbstractMap {
     public final AbstractNode getNode(int cellID) {
         return this.nodes.get(cellID);
     }
+
+    public void setCanMoveDiagonaly(boolean canMoveDiagonaly) {
+        this.canMoveDiagonaly = canMoveDiagonaly;
+    }
     
     
 
@@ -72,7 +81,7 @@ public abstract class AbstractMap {
             if (node.getKey() % WIDTH == 0) {
                 mapToString += (char) 10;
             }
-            mapToString += node.getValue().isWalkable() ? "." : "X" ;
+            mapToString += node.getValue().getCharID();
         }
         return mapToString;
     }
@@ -198,7 +207,7 @@ public abstract class AbstractMap {
             openList.remove(current); // delete current node from open list
 
             if ( current.getCellID()== newCellID ) { // found goal
-                return calcPath(nodes.get(oldCellID), current);
+                return calcPath(nodes.get(oldCellID), current, includeFirst, includeLast);
             }
 
             // for all adjacent nodes:
@@ -225,29 +234,38 @@ public abstract class AbstractMap {
         return null; // unreachable
     }
 
-    /**
-     * calculates the found path between two points according to their given
-     * <code>previousNode</code> field.
-     *
-     * @param start
-     * @param goal
-     * @return
-     */
-    private List<AbstractNode> calcPath(AbstractNode start, AbstractNode goal) {
+    
+    
+    
+    
+    private List<AbstractNode> calcPath(AbstractNode start, AbstractNode goal, boolean includeFirst, boolean includeLast) {
         // TODO if invalid nodes are given (eg cannot find from
         // goal to start, this method will result in an infinite loop!)
         LinkedList<AbstractNode> path = new LinkedList<AbstractNode>();
 
-        AbstractNode curr = goal;
+        
+        
+        
+        AbstractNode curr ;
+        if(includeLast){
+            curr = goal;
+        }else{
+            curr = goal.getPrevious();
+        }
+        
         boolean done = false;
         while (!done) {
             path.addFirst(curr);
             curr = curr.getPrevious();
-
             if (curr.equals(start)) {
                 done = true;
+                if(includeFirst){
+                    path.addFirst(start);
+                }
             }
         }
+        
+        
         return path;
     }
 
@@ -317,7 +335,7 @@ public abstract class AbstractMap {
         }
 
         // add nodes that are diagonaly adjacent too:
-        if (CANMOVEDIAGONALY) {
+        if (canMoveDiagonaly) {
             futurCellID = getFuturID(node.getCellID(), Direction.EST_SOUTH);
             if (futurCellID != -1) {
                 temp = this.getNode(futurCellID);

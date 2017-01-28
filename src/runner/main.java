@@ -7,6 +7,7 @@ package runner;
 
 import abstractClasses.AbstractMap;
 import abstractClasses.AbstractNode;
+import entities.cellules.Block;
 import entities.maps.Incarnam;
 import java.util.List;
 
@@ -20,12 +21,12 @@ public class main {
         
         
         AbstractMap map = new Incarnam();
-        
+        map.setCanMoveDiagonaly(false);
         
         List<AbstractNode> nodesPath = map.findPath(0, 99, true, true);
         
         for(AbstractNode node : nodesPath){
-            map.setWalkable(node.getCellID(), false);
+            map.setCell(new Block(node.getCellID()));
         }
         System.out.println(map.pringMap());
     }
